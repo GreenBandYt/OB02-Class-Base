@@ -1,24 +1,40 @@
-# Инкапсуляция часть 2
+# Программа Авто:
 
-class Test:
-    def public_function(self):
-        print("Публичный метод")
+class Car:
+    def __init__(self, make, model):
+        self.public_make = make
+        self._protected_model = model
+        self.__private_year = 2022
 
-    def _protected_function(self):
-        print("Защищенный метод")
+    def public_method(self):
+        return f"Это открытый метод. Машина {self.public_make} {self._protected_model}."
 
-    def __private_function(self):
-        print("Приватный метод")
+    def _protected_method(self):
+        return f"Это защищенный метод."
 
-    def test_private(self):
-        self.__private_function()
-
-    def test_protected(self):
-        self._protected_function()
-
+    def __private_method(self):
+        return f"Это закрытый метод."
 
 
-test = Test()
-test.public_function()
-test.test_protected()
-test.test_private()
+class ElectricCar(Car):
+    def __init__(self, make, model, battery_size):
+        super().__init__(make, model)
+        self.battery = battery_size
+
+    def get_details(self):
+        details = f"Это электрическая машина. Машина {self.public_make} {self._protected_model}. Батарея {self.battery} kWh."
+        return details
+
+tesla = ElectricCar("Tesla", "Model S", 100)
+print(tesla.public_make)
+print(tesla.public_method())
+
+print(tesla._protected_model)
+print(tesla._protected_method())
+
+
+print(tesla._Car__private_year)
+
+
+
+
