@@ -1,27 +1,24 @@
-# Инкапсуляция
+# Инкапсуляция часть 2
 
 class Test:
-    def __init__(self):
-        self.pablic = "публичное"
-        self._protected = "защищенное"
-        self.__private = "приватное"
+    def public_function(self):
+        print("Публичный метод")
 
-    def test(self):
-        print(self.pablic)
-        print(self._protected)
-        print(self.__private)
-    def get_private(self):
-        return self.__private
+    def _protected_function(self):
+        print("Защищенный метод")
 
-    def set_private(self, value):
-        self.__private = value
+    def __private_function(self):
+        print("Приватный метод")
+
+    def test_private(self):
+        self.__private_function()
+
+    def test_protected(self):
+        self._protected_function()
+
+
 
 test = Test()
-
-print(test.pablic)
-print(test._protected)
-print(test.get_private())
-
-test.set_private("приватное значение")
-print(test.get_private())
-
+test.public_function()
+test.test_protected()
+test.test_private()
