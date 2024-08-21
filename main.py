@@ -1,5 +1,3 @@
-# Домашнее задание:
-
 import pickle
 
 class User:
@@ -36,11 +34,16 @@ class Admin(User):
         self.set_access_level('admin')
 
     def add_user(self, user_list, user):
-        if user.get_user_id() == 1:
-            print("Нельзя добавить пользователя с ID 1, так как он зарезервирован для администратора.")
-            return
-
         if isinstance(user, User):
+            # Проверяем, существует ли пользователь с таким же user_id
+            if any(existing_user.get_user_id() == user.get_user_id() for existing_user in user_list):
+                print(f"Пользователь с ID {user.get_user_id()} уже существует.")
+                return
+
+            if user.get_user_id() == 1:
+                print("Нельзя добавить пользователя с ID 1, так как он зарезервирован для администратора.")
+                return
+
             user_list.append(user)
             print(f"Пользователь {user.get_name()} добавлен.")
         else:
@@ -54,6 +57,7 @@ class Admin(User):
         for user in user_list:
             if user.get_user_id() == user_id:
                 user_list.remove(user)
+                save_users(user_list)
                 print(f"Пользователь {user.get_name()} удалён.")
                 return
         print("Пользователь не найден.")
@@ -66,6 +70,7 @@ class Admin(User):
         for user in user_list:
             if user.get_user_id() == user_id:
                 user.set_name(new_name)
+                save_users(user_list)
                 print(f"Пользователь {user.get_name()} обновлён.")
                 return
         print("Пользователь не найден.")
@@ -93,7 +98,14 @@ def load_users(filename='users.pkl'):
 
 def main():
     user_list = load_users()
-    admin = Admin(user_id=1, name="Администратор")
+
+    # Проверяем, есть ли уже администратор
+    admin = next((user for user in user_list if isinstance(user, Admin)), None)
+    if not admin:
+        admin = Admin(user_id=1, name="Администратор")
+        user_list.append(admin)
+        save_users(user_list)
+        print(f'Создана учетная запись администратора: {admin}')
 
     while True:
         print("\n1. Добавить пользователя")
@@ -107,17 +119,20 @@ def main():
         if choice == '1':
             user_id = int(input("Введите ID пользователя: "))
             name = input("Введите имя пользователя: ")
-            user = User(user_id=user_id, name=name)
+            user = User(user_id, name)
             admin.add_user(user_list, user)
+            save_users(user_list)
 
         elif choice == '2':
             user_id = int(input("Введите ID пользователя для удаления: "))
             admin.remove_user(user_list, user_id)
+            save_users(user_list)
 
         elif choice == '3':
             user_id = int(input("Введите ID пользователя для обновления: "))
             new_name = input("Введите новое имя пользователя: ")
             admin.update_user(user_list, user_id, new_name)
+            save_users(user_list)
 
         elif choice == '4':
             for user in user_list:
@@ -125,11 +140,10 @@ def main():
 
         elif choice == '5':
             save_users(user_list)
-            print("Завершение программы.")
             break
 
         else:
-            print("Неверный выбор. Пожалуйста, попробуйте снова.")
+            print("Неверный выбор. Попробуйте снова.")
 
 if __name__ == "__main__":
     main()
